@@ -20,7 +20,7 @@ export default class HomeController {
   public newEventEndTime: string = '';
 
   constructor(
-    private dateService: IDataService,
+    private dataService: IDataService,
     private $window: IWindowService,
     private $rootScope: IRootScopeService) {
       const vm: HomeController = this;
@@ -41,7 +41,7 @@ export default class HomeController {
   private getCurrentEmail(): void {
     const vm: HomeController = this;
     this.isLoading = true;
-    this.dateService.getCurrentEmail()
+    this.dataService.getCurrentEmail()
       .then((email: string): void => {
         vm.currentEmail = email;
       });
@@ -52,7 +52,12 @@ export default class HomeController {
   }
 
   private UpdateEvent(event: IEvent): void {
+    const vm: HomeController = this;
 
+    this.dataService.updateEvent(event)
+      .then((iar: IItemAddResult) => {
+        alert("Updated");
+      });
   }
 
   private DeleteAttendee(attendee: IAttendee): void {
@@ -66,7 +71,7 @@ export default class HomeController {
   private loadEvents(showpastevents?: boolean): void {
     const vm: HomeController = this;
     this.isLoading = true;
-    this.dateService.getEvents(showpastevents)
+    this.dataService.getEvents(showpastevents)
       .then((events: IEvent[]): void => {
         vm.eventCollection = [];
         vm.eventCollection = events;
@@ -76,7 +81,7 @@ export default class HomeController {
   private loadAttendees(showpastevents?: boolean): void {
     const vm: HomeController = this;
     this.isLoading = true;
-    this.dateService.getAttendees(showpastevents)
+    this.dataService.getAttendees(showpastevents)
       .then((attendees: IAttendee[]): void => {
         vm.attendeeCollection = [];
         vm.attendeeCollection = attendees;
@@ -92,7 +97,7 @@ export default class HomeController {
       EventID: this.newAttendeeEventID
     };
 
-    this.dateService.addAttendee(attendee)
+    this.dataService.addAttendee(attendee)
       .then((iar: IItemAddResult) => {
         vm.loadAttendees();
 
@@ -113,7 +118,7 @@ export default class HomeController {
       TotalAttendees: 0
     };
 
-    this.dateService.addEvent(event).then((iar: IItemAddResult) => {
+    this.dataService.addEvent(event).then((iar: IItemAddResult) => {
       vm.loadEvents();
 
       vm.newEventName = '';
