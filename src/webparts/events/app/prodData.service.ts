@@ -80,7 +80,25 @@ export default class ProdDataService implements IDataService {
   }
 
   public deleteEvent(event: IEvent): IPromise<{}> {
-    return null;
+    const deferred: IDeferred<{}> = this.$q.defer();
+    const ds = this;
+    let pos: number = -1;
+
+    sp.web.lists.getByTitle("Events").items.getById(event.ID).delete()
+      .then(_ => {
+        for (let i: number = 0; i < ds.eventItems.length; i++) {
+          if (ds.eventItems[i].ID === event.ID) {
+            pos = i;
+          }
+        }
+
+        if (pos > -1)
+          ds.eventItems.splice(pos, 1);
+
+        deferred.resolve();
+      });
+
+      return deferred.promise;
   }
 
   public getAttendees(showpastevents?: boolean): IPromise<IAttendee[]> {

@@ -64,8 +64,13 @@ export default class HomeController {
 
   }
 
-  private DeleteEvent(event: IEvent): void {
+  private deleteEvent(event: IEvent): void {
+    const vm: HomeController = this;
 
+    this.dataService.deleteEvent(event)
+      .then(_ => {
+        vm.loadEvents();
+      });
   }
 
   private loadEvents(showpastevents?: boolean): void {
