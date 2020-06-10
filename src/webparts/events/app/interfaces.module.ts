@@ -1,7 +1,7 @@
 import * as angular from 'angular';
 
 export interface IEvent {
-  ID: number;
+  ID?: number;
   Title: string;
   StartDate: string;
   EndDate: string;
@@ -10,7 +10,7 @@ export interface IEvent {
 }
 
 export interface IAttendee {
-  ID: number;
+  ID?: number;
   Fullname1: string;
   Email: string;
   EventID: number;

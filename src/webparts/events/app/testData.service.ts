@@ -1,3 +1,4 @@
+import { IItemAddResult } from '@pnp/sp/items';
 import { IEvent, IAttendee, IDataService } from './interfaces.module';
 import { IQService, IPromise,IDeferred } from 'angular';
 
@@ -72,7 +73,31 @@ export default class TestDataService implements IDataService {
   }
 
   public addEvent(event: IEvent): IPromise<{}> {
-    return null;
+    const deferred: IDeferred<{}> = this.$q.defer();
+
+    this.nextAttendeeId = this.nextAttendeeId++;
+
+    let myData = {
+      ID: this.nextEventId
+    };
+
+    let iar: IItemAddResult = {
+      data: myData,
+      item: null
+    };
+
+    this.eventItems.push({
+      ID: this.nextAttendeeId,
+      Title: event.Title,
+      StartDate: event.StartDate,
+      EndDate: event.EndDate,
+      Campus: event.Campus,
+      TotalAttendees: 0
+    });
+
+    deferred.resolve(iar);
+
+    return deferred.promise;
   }
 
   public updateEvent(event: IEvent): IPromise<{}> {

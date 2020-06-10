@@ -1,7 +1,12 @@
 import { IEvent, IAttendee, IDataService } from './interfaces.module';
 import { IQService, IPromise, IDeferred } from 'angular';
+import { sp } from "@pnp/sp";
+import "@pnp/sp/webs";
+import "@pnp/sp/lists";
+import { IItemAddResult } from "@pnp/sp/items";
 
 export default class ProdDataService implements IDataService {
+  private eventItems: IEvent[] = [];
 
   constructor(private $q: IQService) {
 
@@ -12,7 +17,23 @@ export default class ProdDataService implements IDataService {
   }
 
   public addEvent(event: IEvent): IPromise<{}> {
-    return null;
+    const deferred: IDeferred<IItemAddResult> = this.$q.defer();
+
+    sp.web.lists.getByTitle('Events').items.add(event)
+      .then((e: IItemAddResult) => {
+        this.eventItems.push({
+          ID: e.data.ID,
+          Title: event.Title,
+          StartDate: event.StartDate,
+          EndDate: event.EndDate,
+          Campus: event.Campus,
+          TotalAttendees: 0
+        });
+
+        deferred.resolve(e);
+      });
+
+      return deferred.promise;
   }
 
   public updateEvent(event: IEvent): IPromise<{}> {

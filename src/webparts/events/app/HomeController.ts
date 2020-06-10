@@ -1,3 +1,4 @@
+import { IItemAddResult } from '@pnp/sp/items';
 import { IEvent, IAttendee, IDataService } from "./interfaces.module";
 import { IWindowService, IRootScopeService } from "angular";
 
@@ -43,19 +44,11 @@ export default class HomeController {
 
   }
 
-  private AddEvent(): void {
-
-  }
-
-  private UpdateAttendeet(attendee: IAttendee): void {
-
-  }
-
   private UpdateEvent(event: IEvent): void {
 
   }
 
-  private DeleteAttendeet(attendee: IAttendee): void {
+  private DeleteAttendee(attendee: IAttendee): void {
 
   }
 
@@ -76,6 +69,29 @@ export default class HomeController {
   }
 
   private addEvent(): void {
+    const vm: HomeController = this;
+
+    var event: IEvent = {
+      Title: vm.newEventName,
+      StartDate: new Date(vm.newEventStartDate + ' ' + vm.newEventStartTime).toDateString(),
+      EndDate: new Date(vm.newEventEndDate + ' ' + vm.newEventEndTime).toDateString(),
+      Campus: vm.newEventCampus,
+      TotalAttendees: 0
+    };
+
+    this.dateService.addEvent(event).then((iar: IItemAddResult) => {
+      vm.loadEvents();
+
+      vm.newEventName = '';
+      vm.newEventCampus = '';
+      vm.newEventStartDate = '';
+      vm.newEventStartTime = '';
+      vm.newEventEndDate = '';
+      vm.newEventEndTime = '';
+    });
+  }
+
+  private updateAttendee(attendee: IAttendee): void {
 
   }
 }
