@@ -17,8 +17,11 @@ export interface IEventsWebPartProps {
 
 import './app/app.module';
 import LandingTemplate from './LandingTemplate';
+import { auto } from 'angular';
+import { bootstrap } from 'angular';
 
 export default class EventsWebPart extends BaseClientSideWebPart <IEventsWebPartProps> {
+  private $injector: auto.IInjectorService;
 
   public render(): void {
     if (!this.renderedOnce) {
@@ -28,7 +31,12 @@ export default class EventsWebPart extends BaseClientSideWebPart <IEventsWebPart
       // this.domElement.innerHTML = ajax.responseText;
 
       this.domElement.innerHTML = LandingTemplate.templateHtml;
+      this.$injector = bootstrap(this.domElement, ['eventsapp']);
     }
+
+    this.$injector.get('$rootScope').$broadcast('configureChanged', {
+      showpastevents: this.properties.showpastevents
+    });
   }
 
   protected get dataVersion(): Version {

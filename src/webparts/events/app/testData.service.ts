@@ -124,7 +124,16 @@ export default class TestDataService implements IDataService {
   }
 
   public getAttendees(showpastevents?: boolean): IPromise<IAttendee[]> {
-    return null;
+    const deferred: IDeferred<IAttendee[]> = this.$q.defer();
+    let attendeeItems: IAttendee[] = [];
+
+    for (let i: number = 0; i < this.attendeeItems.length; i++) {
+      attendeeItems.push(this.attendeeItems[i]);
+    }
+
+    deferred.resolve(this.attendeeItems);
+
+    return deferred.promise;
   }
 
   public addAttendee(attendee: IAttendee): IPromise<{}> {

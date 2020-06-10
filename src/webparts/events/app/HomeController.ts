@@ -1,6 +1,6 @@
 import { IItemAddResult } from '@pnp/sp/items';
 import { IEvent, IAttendee, IDataService } from "./interfaces.module";
-import { IWindowService, IRootScopeService } from "angular";
+import { IWindowService, IRootScopeService, IAngularEvent } from "angular";
 
 export default class HomeController {
   public isLoading: boolean = false;
@@ -25,10 +25,17 @@ export default class HomeController {
     private $rootScope: IRootScopeService) {
       const vm: HomeController = this;
       this.init();
+
+      $rootScope.$on('configurationChanged', (event: IAngularEvent, args: { showpastevents: boolean }) => {
+        vm.init(args.showpastevents);
+      });
   }
 
   private init(showpastevents?: boolean): void {
     this.showpastevents = showpastevents;
+    this.getCurrentEmail();
+    this.loadEvents(showpastevents);
+    this.loadAttendees(showpastevents);
   }
 
   private getCurrentEmail(): void {
@@ -67,7 +74,13 @@ export default class HomeController {
   }
 
   private loadAttendees(showpastevents?: boolean): void {
-
+    const vm: HomeController = this;
+    this.isLoading = true;
+    this.dateService.getAttendees(showpastevents)
+      .then((attendees: IAttendee[]): void => {
+        vm.attendeeCollection = [];
+        vm.attendeeCollection = attendees;
+      });
   }
 
   private addAttendee(): void {

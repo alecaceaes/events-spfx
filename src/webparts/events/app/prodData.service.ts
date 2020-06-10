@@ -7,6 +7,7 @@ import { IItemAddResult } from "@pnp/sp/items";
 
 export default class ProdDataService implements IDataService {
   private eventItems: IEvent[] = [];
+  private attendeeItems: IAttendee[] = [];
 
   constructor(private $q: IQService) {
 
@@ -61,7 +62,19 @@ export default class ProdDataService implements IDataService {
   }
 
   public getAttendees(showpastevents?: boolean): IPromise<IAttendee[]> {
-    return null;
+    const deferred: IDeferred<IAttendee[]> = this.$q.defer();
+
+    sp.web.lists.getByTitle("Attendees").items.select("Id","FullName1","Email","EventID").get<IAttendee[]>()
+      .then(e => {
+        this.attendeeItems = [];
+        for (let i: number = 0; i < e.length; i++) {
+          this.attendeeItems.push(e[i]);
+        }
+
+        deferred.resolve(this.attendeeItems);
+      });
+
+      return deferred.promise;
   }
 
   public addAttendee(attendee: IAttendee): IPromise<{}> {
