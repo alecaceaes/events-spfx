@@ -179,8 +179,20 @@ export default class TestDataService implements IDataService {
     return deferred.promise;
   }
 
-  public updateAttendee(event: IAttendee): IPromise<{}> {
-    return null;
+  public updateAttendee(attendee: IAttendee): IPromise<{}> {
+    const deferred: IDeferred<{}> = this.$q.defer();
+
+    for (let i: number = 0; i < this.attendeeItems.length; i ++) {
+      if (this.attendeeItems[i].ID === attendee.ID) {
+        this.attendeeItems[i].Email = attendee.Email;
+        this.attendeeItems[i].Fullname1 = attendee.Fullname1;
+        this.attendeeItems[i].EventID = attendee.EventID;
+      }
+    }
+
+    deferred.resolve(attendee);
+
+    return deferred.promise;
   }
 
   public deleteAttendee(event: IAttendee): IPromise<{}> {

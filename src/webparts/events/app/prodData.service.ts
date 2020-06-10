@@ -3,7 +3,7 @@ import { IQService, IPromise, IDeferred } from 'angular';
 import { sp } from "@pnp/sp";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
-import { IItemAddResult } from "@pnp/sp/items";
+import { IItemAddResult, IItemUpdateResult } from "@pnp/sp/items";
 
 export default class ProdDataService implements IDataService {
   private eventItems: IEvent[] = [];
@@ -100,11 +100,11 @@ export default class ProdDataService implements IDataService {
   }
 
   public addAttendee(attendee: IAttendee): IPromise<{}> {
-    const deferred: IDeferred<IItemAddResult> = this.$q.defer();
+    const deferred: IDeferred<IItemUpdateResult> = this.$q.defer();
     const ds = this;
 
     sp.web.lists.getByTitle('Attendees').items.add(attendee)
-      .then((iar: IItemAddResult) => {
+      .then((iar: IItemUpdateResult) => {
         for (let i: number = 0; i < ds.eventItems.length; i++) {
           if (ds.eventItems[i].ID === attendee.EventID) {
             let total: number = ++this.eventItems[i].TotalAttendees;
@@ -121,8 +121,27 @@ export default class ProdDataService implements IDataService {
       return deferred.promise;
   }
 
-  public updateAttendee(event: IAttendee): IPromise<{}> {
-    return null;
+  public updateAttendee(attendee: IAttendee): IPromise<{}> {
+    const deferred: IDeferred<{}> = this.$q.defer();
+    let ds = this;
+
+    sp.web.lists.getByTitle("Attendees").items.getById(attendee.ID).update({
+      FullName1: attendee.Fullname1,
+      Email: attendee.Email,
+      EventID: attendee.EventID
+    }).then((iar: IItemUpdateResult) => {
+      for (let i: number = 0; i < ds.attendeeItems.length; i++) {
+        if (ds.attendeeItems[i].ID === attendee.ID) {
+          ds.attendeeItems[i].Email = attendee.Email;
+          ds.attendeeItems[i].Fullname1 = attendee.Fullname1;
+          ds.attendeeItems[i].EventID = attendee.EventID;
+        }
+      }
+
+      deferred.resolve(iar);
+    });
+
+    return deferred.promise;
   }
 
   public deleteAttendee(event: IAttendee): IPromise<{}> {

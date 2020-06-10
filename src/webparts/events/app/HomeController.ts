@@ -131,6 +131,11 @@ export default class HomeController {
   }
 
   private updateAttendee(attendee: IAttendee): void {
+    const vm: HomeController = this;
 
+    this.dataService.updateAttendee(attendee)
+      .then((iar: IItemAddResult) => {
+        alert("Updated");
+      });
   }
 }
