@@ -69,7 +69,22 @@ export default class TestDataService implements IDataService {
   }
 
   public getEvents(showpastevents?: boolean): IPromise<IEvent[]> {
-    return null;
+    const deferred: IDeferred<IEvent[]> = this.$q.defer();
+    let eventItems: IEvent[] = [];
+
+    for(let i: number = 0; i < this.eventItems.length; i++) {
+      let datetest = new Date(this.eventItems[i].StartDate);
+      if (datetest < new Date() && !showpastevents) {
+        continue;
+      }
+      else {
+        eventItems.push(this.eventItems[i]);
+      }
+    }
+
+    deferred.resolve(eventItems);
+
+    return deferred.promise;
   }
 
   public addEvent(event: IEvent): IPromise<{}> {

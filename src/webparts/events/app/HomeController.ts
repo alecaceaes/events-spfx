@@ -57,7 +57,13 @@ export default class HomeController {
   }
 
   private loadEvents(showpastevents?: boolean): void {
-
+    const vm: HomeController = this;
+    this.isLoading = true;
+    this.dateService.getEvents(showpastevents)
+      .then((events: IEvent[]): void => {
+        vm.eventCollection = [];
+        vm.eventCollection = events;
+      });
   }
 
   private loadAttendees(showpastevents?: boolean): void {

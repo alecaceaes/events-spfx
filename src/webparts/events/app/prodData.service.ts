@@ -13,7 +13,23 @@ export default class ProdDataService implements IDataService {
   }
 
   public getEvents(showpastevents?: boolean): IPromise<IEvent[]> {
-    return null;
+    const deferred: IDeferred<IEvent[]> = this.$q.defer();
+    const ds = this;
+
+    sp.web.lists.getByTitle('Events').items.select("Id", "Title", "StartDate", "EndDate", "Campus", "TotalAttendees").get<IEvent[]>()
+      .then(e => {
+        ds.eventItems = [];
+        for (let i: number = 0; i < e.length; i++) {
+          let datetest = new Date(e[i].StartDate);
+          if (datetest < new Date() && !showpastevents) {
+            continue;
+          }
+          ds.eventItems.push(e[i]);
+        }
+        deferred.resolve(ds.eventItems);
+      });
+
+      return deferred.promise;
   }
 
   public addEvent(event: IEvent): IPromise<{}> {
