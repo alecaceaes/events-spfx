@@ -112,8 +112,33 @@ export default class TestDataService implements IDataService {
     return null;
   }
 
-  public addAttendee(event: IAttendee): IPromise<{}> {
-    return null;
+  public addAttendee(attendee: IAttendee): IPromise<{}> {
+    const deferred: IDeferred<{}> = this.$q.defer();
+
+    this.nextAttendeeId = this.nextAttendeeId++;
+
+    let myData = {
+      ID: this.nextAttendeeId
+    };
+
+    let iar: IItemAddResult = {
+      data: myData,
+      item: null
+    };
+
+    for(let i: number = 0; i < this.eventItems.length; i++) {
+      if(this.eventItems[i].ID === attendee.EventID) {
+        let total: number = ++this.eventItems[i].TotalAttendees;
+        let eventItem: IEvent = this.eventItems[i];
+        eventItem.TotalAttendees = total;
+
+        this.updateEvent(eventItem).then((iar2: IItemAddResult) => {
+          deferred.resolve(iar);
+        });
+      }
+    }
+
+    return deferred.promise;
   }
 
   public updateAttendee(event: IAttendee): IPromise<{}> {

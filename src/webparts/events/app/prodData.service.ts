@@ -48,8 +48,26 @@ export default class ProdDataService implements IDataService {
     return null;
   }
 
-  public addAttendee(event: IAttendee): IPromise<{}> {
-    return null;
+  public addAttendee(attendee: IAttendee): IPromise<{}> {
+    const deferred: IDeferred<IItemAddResult> = this.$q.defer();
+    const ds = this;
+
+    sp.web.lists.getByTitle('Attendees').items.add(attendee)
+      .then((iar: IItemAddResult) => {
+        for (let i: number = 0; i < ds.eventItems.length; i++) {
+          if (ds.eventItems[i].ID === attendee.EventID) {
+            let total: number = ++this.eventItems[i].TotalAttendees;
+            let eventItem: IEvent = this.eventItems[i];
+            eventItem.TotalAttendees = total;
+
+            this.updateEvent(eventItem).then((iar2:IItemAddResult) => {
+              deferred.resolve(iar);
+            })
+          }
+        }
+      });
+
+      return deferred.promise;
   }
 
   public updateAttendee(event: IAttendee): IPromise<{}> {

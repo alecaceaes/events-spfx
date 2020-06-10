@@ -11,7 +11,7 @@ export default class HomeController {
   public currentEmail: string = '';
   public newAttendeeEventID: number = 0;
   public newAttendeeFullName: string = '';
-  public newAttendeeFullEmail: string = '';
+  public newAttendeeEmail: string = '';
   public newEventName: string = '';
   public newEventCampus: string = '';
   public newEventStartDate: string = '';
@@ -65,7 +65,22 @@ export default class HomeController {
   }
 
   private addAttendee(): void {
+    const vm: HomeController = this;
 
+    let attendee: IAttendee = {
+      Fullname1: this.newAttendeeFullName,
+      Email: this.newAttendeeEmail,
+      EventID: this.newAttendeeEventID
+    };
+
+    this.dateService.addAttendee(attendee)
+      .then((iar: IItemAddResult) => {
+        vm.loadAttendees();
+
+        this.newAttendeeFullName = '';
+        this.newAttendeeEmail = '';
+        this.newAttendeeEventID = 0;
+      });
   }
 
   private addEvent(): void {
