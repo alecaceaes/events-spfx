@@ -210,8 +210,23 @@ export default class TestDataService implements IDataService {
     return deferred.promise;
   }
 
-  public deleteAttendee(event: IAttendee): IPromise<{}> {
-    return null;
+  public deleteAttendee(attendee: IAttendee): IPromise<{}> {
+    const deferred: IDeferred<{}> = this.$q.defer();
+    const ds = this;
+    let pos: number = -1;
+
+    for (let i: number = 0; i < ds.attendeeItems.length; i++) {
+      if (ds.attendeeItems[i].ID === attendee.ID) {
+        pos = i;
+      }
+    }
+
+    if (pos > -1)
+      ds.attendeeItems.splice(pos, 1);
+
+    deferred.resolve();
+
+    return deferred.promise;
   }
 
   public getCurrentEmail(): IPromise<string> {

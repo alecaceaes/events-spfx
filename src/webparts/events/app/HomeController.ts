@@ -60,8 +60,12 @@ export default class HomeController {
       });
   }
 
-  private DeleteAttendee(attendee: IAttendee): void {
+  private deleteAttendee(attendee: IAttendee): void {
+    const vm: HomeController = this;
 
+    this.dataService.deleteAttendee(attendee).then(_ => {
+      vm.loadEvents();
+    })
   }
 
   private deleteEvent(event: IEvent): void {
